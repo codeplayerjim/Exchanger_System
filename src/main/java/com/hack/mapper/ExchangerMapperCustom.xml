@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hack.mapper.ExchangerMapperCustom">
+    <resultMap id="ExchangerAndSelectCourseResultMap" type="ExchangerCustom">
+        <!--配置映射的订单信息
+        property的值应跟entity变量名相同
+        column的值应与对应的数据库表字段名相同-->
+        <id column="e_id" property="e_id"/>
+        <result column="username" property="username"/>
+        <result column="age" property="age"/>
+        <result column="createTime" property="createTime"/>
+        <result column="collegeid" property="collegeid"/>
+        <!--collection对关联查询到的多条记录映射到集合对象中
+        property: 将关联查询到的多条信息映射到entity属性
+        ofType: 映射到集合属性中pojo类型
+        -->
+        <collection property="selectedCourseList" ofType="SelectedCourseCustom">
+            <result column="courseID" property="courseid"/>
+            <result column="exchangerID" property="exchangerid"/>
+            <result column="mark" property="mark"/>
+            <!--配置映射的关系的课程信息-->
+            <association property="courseCustom" javaType="CourseCustom">
+                <id column="courseID" property="courseid"/>
+                <result column="courseName" property="coursename"/>
+                <result column="teacherID" property="teacherid"/>
+                <result column="courseTime" property="coursetime"/>
+                <result column="classRoom" property="classroom"/>
+                <result column="courseWeek" property="courseweek"/>
+                <result column="courseType" property="coursetype"/>
+                <result column="collegeID" property="collegeid"/>
+                <result column="score" property="score"/>
+            </association>
+
+
+        </collection>
+    </resultMap>
+
+    <select id="findByPaging" parameterType="PagingVO" resultType="ExchangerCustom">
+        select exchanger.*, college.collegeName
+        from exchanger, college
+        WHERE exchanger.collegeID = college.collegeID
+        limit #{toPageNo}, #{pageSize}
+    </select>
+
+    <select id="findExchangerAndSelectCourseListById" parameterType="int" resultMap="ExchangerAndSelectCourseResultMap">
+        SELECT
+               exchanger.*,
+               selectedcourse.*,
+               course.*
+        FROM
+             exchanger,
+             selectedcourse,
+             course
+        WHERE
+                exchanger.e_id = #{id}
+          AND
+                exchanger.e_id = selectedcourse.exchangerID
+          AND
+                selectedcourse.courseID = course.courseID
+    </select>
+
+</mapper>
