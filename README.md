@@ -1,7 +1,7 @@
 # Exchanger_System
 ##**交换生系统**
 
-## 前言
+### 前言
 
 Exchanger_System 一个简单的选课系统
 
